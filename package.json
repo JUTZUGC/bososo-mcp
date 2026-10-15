@@ -1,0 +1,45 @@
+{
+  "name": "bososo-mcp",
+  "version": "1.0.0",
+  "description": "博搜搜 MCP 工具 —— 把资源搜索能力接给 AI（MCP server + CLI，零依赖）",
+  "type": "module",
+  "license": "MIT",
+  "author": "JUTZUGC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JUTZUGC/bososo-mcp.git"
+  },
+  "homepage": "https://github.com/JUTZUGC/bososo-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/JUTZUGC/bososo-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cli",
+    "ai",
+    "bososo"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "bososo": "./cli.mjs"
+  },
+  "main": "./lib/bososo.mjs",
+  "exports": {
+    ".": "./lib/bososo.mjs"
+  },
+  "files": [
+    "cli.mjs",
+    "mcp-server.mjs",
+    "lib/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node mcp-server.mjs",
+    "search": "node cli.mjs search",
+    "get": "node cli.mjs get"
+  }
+}
