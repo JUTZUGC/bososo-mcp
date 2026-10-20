@@ -8,9 +8,10 @@
 // 接入手册见 README.md。
 // ⚠️ stdout 只允许出现 JSON-RPC 消息（客户端按行解析），任何日志都必须走 stderr。
 
-import { createClient, BososoError } from "./lib/bososo.mjs";
+import { createClient, BososoError, VERSION } from "./lib/bososo.mjs";
 
-const SERVER_INFO = { name: "bososo", version: "1.0.0" };
+// 版本号唯一来源是 package.json（见 lib/bososo.mjs 的 VERSION），这里不再单独写死
+const SERVER_INFO = { name: "bososo", version: VERSION };
 // 客户端与服务端只用到 initialize / tools/list / tools/call，这个版本足够
 const PROTOCOL_VERSION = "2024-11-05";
 
