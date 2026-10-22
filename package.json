@@ -1,6 +1,6 @@
 {
   "name": "bososo-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "博搜搜 MCP 工具 —— 把资源搜索能力接给 AI（MCP server + CLI，零依赖）",
   "type": "module",
   "license": "MIT",
