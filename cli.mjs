@@ -8,7 +8,7 @@
 // 退出码：0 成功 / 1 业务失败（需要安全验证、请求过多、资源取不到…）/ 2 用法错误
 
 import { createClient, BososoError } from "./lib/bososo.mjs";
-import { checkHost, HOST_BLOCKED } from "./lib/hostCheck.mjs";
+import { checkHost, buildHostBlocked } from "./lib/hostCheck.mjs";
 
 const USAGE = `博搜搜命令行工具
 
@@ -99,11 +99,20 @@ async function main() {
   // 帮助信息不受限制（上面已返回），方便随时查看用法。
   const host = await checkHost();
   if (!host.allowed) {
+    const blocked = buildHostBlocked(host.chain);
     if (asJson) {
-      console.log(JSON.stringify({ ok: false, ...HOST_BLOCKED }, null, 2));
+      console.log(JSON.stringify(blocked, null, 2));
     } else {
-      console.error(`❌ ${HOST_BLOCKED.error}`);
-      console.error(`   ${HOST_BLOCKED.hint}`);
+      console.error(`❌ ${blocked.error}`);
+      console.error(`   原因：${blocked.reason}`);
+      if (blocked.detected?.processes?.length) {
+        console.error(`   检测到的进程：${blocked.detected.processes.join(" → ")}`);
+      }
+      console.error("");
+      console.error("   改用百度搭子的步骤：");
+      for (const step of blocked.howToFix) console.error(`   ${step}`);
+      console.error("");
+      console.error(`   图文步骤：${blocked.guideUrl}`);
     }
     return 1;
   }

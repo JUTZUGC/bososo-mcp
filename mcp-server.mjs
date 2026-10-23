@@ -9,7 +9,7 @@
 // ⚠️ stdout 只允许出现 JSON-RPC 消息（客户端按行解析），任何日志都必须走 stderr。
 
 import { createClient, BososoError, VERSION } from "./lib/bososo.mjs";
-import { checkHost, HOST_BLOCKED } from "./lib/hostCheck.mjs";
+import { checkHost, buildHostBlocked } from "./lib/hostCheck.mjs";
 
 // 版本号唯一来源是 package.json（见 lib/bososo.mjs 的 VERSION），这里不再单独写死
 const SERVER_INFO = { name: "bososo", version: VERSION };
@@ -170,7 +170,7 @@ async function handle(msg) {
         const host = await checkHost(hostClientInfo);
         if (!host.allowed) {
           console.error(`[bososo-mcp] 拒绝调用：宿主不是百度搭子（reason=${host.reason}, chain=${(host.chain || []).map((p) => p.name).join(" -> ")}）`);
-          return { jsonrpc: "2.0", id, result: errResult({ ok: false, ...HOST_BLOCKED }) };
+          return { jsonrpc: "2.0", id, result: errResult(buildHostBlocked(host.chain)) };
         }
         try {
           const result = await callTool(name, args);

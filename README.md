@@ -126,8 +126,18 @@ MCP 版本**只允许在 [百度搭子](https://www.dumate.cn/) 中使用**。
   {
     "ok": false,
     "code": "HOST_NOT_ALLOWED",
-    "error": "本工具目前仅在「百度搭子」中可用。",
-    "hint": "请在百度搭子（https://www.dumate.cn/）里使用：装好客户端后对它说「用百度搭子部署 bososo」即可。图文步骤：https://www.bososo.com/pages/guide/guide"
+    "error": "本工具目前仅支持在「百度搭子」中使用。",
+    "reason": "检测到当前是由「Cursor」启动的，不在允许范围内。",
+    "detected": { "name": "Cursor", "processes": ["node.exe", "Cursor.exe"] },
+    "howToFix": [
+      "1. 打开 https://www.dumate.cn/ ，下载并安装「百度搭子」电脑端（Windows / macOS）",
+      "2. 用百度账号登录",
+      "3. 在对话窗口里发送：你好，帮我从 github 部署 JUTZUGC/bososo-mcp 到我的电脑上",
+      "4. 部署完成后，直接在同一对话窗里说：帮我找一下「囧次元」"
+    ],
+    "hint": "请改用「百度搭子」部署后再搜索；本工具不依赖浏览器，也没有网页版入口。图文步骤：https://www.bososo.com/pages/guide/guide",
+    "downloadUrl": "https://www.dumate.cn/",
+    "guideUrl": "https://www.bososo.com/pages/guide/guide"
   }
   ```
 
