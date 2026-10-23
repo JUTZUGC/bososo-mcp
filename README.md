@@ -134,13 +134,17 @@ MCP 版本**只允许在 [百度搭子](https://www.dumate.cn/) 中使用**。
 判断依据是「启动 MCP 服务的进程链里是否出现百度搭子的进程」，与客户端自报的名称无关
 （百度搭子走 stdio 时自报的是 MCP SDK 默认值 `mcp-client`，和其它工具重名）。
 
-> 命令行工具 `bososo`（`node cli.mjs ...`）不受此限制，方便排查问题。
+> 命令行工具 `bososo`（`node cli.mjs ...`）与 MCP 共用同一条限制：同样只能在百度搭子环境中执行；
+> 只有 `--help` 不受限制。在普通终端里直接运行会返回 `HOST_NOT_ALLOWED` 并给出引导。
 
 ---
 
 ## 快速开始
 
 > 已经用上面的百度搭子部署好了？这一节可以跳过，直接看 [接入 AI 客户端](#接入-ai-客户端)。
+>
+> ⚠️ 下面的命令同样**只能在百度搭子环境中执行**（MCP 与命令行共用同一条使用范围限制），
+> 在普通终端里直接运行会被拒绝并提示去装百度搭子。`node cli.mjs --help` 不受限制。
 
 ### 1. 拿到代码
 
@@ -376,8 +380,7 @@ printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocol
 ## 常见问题
 
 **Q：能在 Cursor / Claude Desktop / Windsurf 里用吗？**
-目前不行。MCP 版本仅支持百度搭子，在其它工具里调用会返回 `HOST_NOT_ALLOWED`，并提示你去装百度搭子。
-命令行工具 `bososo`（`node cli.mjs ...`）不受限制。
+目前不行。MCP 与命令行 `bososo` 都只支持百度搭子，在其它工具里调用会返回 `HOST_NOT_ALLOWED`，并提示去装百度搭子。
 
 **Q：需要申请 API Key 吗？**
 不需要。走公开接口，clone 下来直接就能用。

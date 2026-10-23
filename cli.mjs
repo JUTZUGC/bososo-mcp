@@ -8,6 +8,7 @@
 // 退出码：0 成功 / 1 业务失败（需要安全验证、请求过多、资源取不到…）/ 2 用法错误
 
 import { createClient, BososoError } from "./lib/bososo.mjs";
+import { checkHost, HOST_BLOCKED } from "./lib/hostCheck.mjs";
 
 const USAGE = `博搜搜命令行工具
 
@@ -41,6 +42,7 @@ get 选项：
   node cli.mjs get "s1.xxxxx..."
 
 说明：
+  本工具仅支持在百度搭子（https://www.dumate.cn/）中使用，其它环境会拒绝执行并给出引导。
   搜索需要一点时间把结果找全（通常 20~40 秒），本工具会等到结果齐了再返回，
   所以单次调用耗时较长属正常，不要因为慢就重复调用。
   获取资源比较花时间，且短时间内请求过多会要求先完成一次安全验证。
@@ -91,8 +93,22 @@ async function main() {
 
   if (!cmd || cmd === "help" || a.help || a.h) { console.log(USAGE); return 0; }
 
-  const client = createClient({ baseUrl: a["base-url"] });
   const asJson = Boolean(a.json);
+
+  // 与 MCP 版本同一条使用范围限制：只在百度搭子（DuMate）里可用。
+  // 帮助信息不受限制（上面已返回），方便随时查看用法。
+  const host = await checkHost();
+  if (!host.allowed) {
+    if (asJson) {
+      console.log(JSON.stringify({ ok: false, ...HOST_BLOCKED }, null, 2));
+    } else {
+      console.error(`❌ ${HOST_BLOCKED.error}`);
+      console.error(`   ${HOST_BLOCKED.hint}`);
+    }
+    return 1;
+  }
+
+  const client = createClient({ baseUrl: a["base-url"] });
 
   if (cmd === "search") {
     const kw = a._[1];
