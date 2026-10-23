@@ -63,6 +63,7 @@ function parseArgs(argv) {
 const num = (v) => (v === undefined || v === true ? undefined : Number(v));
 
 function printSearchHuman(r) {
+  if (r.keywordRepaired) console.log(`⚠️ 关键词编码异常（GBK/UTF-8 混淆），已按「${r.keyword}」检索`);
   console.log(`共 ${r.total} 条结果（第 ${r.page} 页 / 共 ${r.maxPage} 页，服务端检索 ${r.took}ms）`);
   if (r.incomplete) console.log(`⚠️ 结果尚未找全（已等 ${Math.round(r.waitedMs / 1000)}s），下面这些可能不完整`);
   if (r.note) console.log(`提示：${r.note}`);

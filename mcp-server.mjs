@@ -86,7 +86,11 @@ async function callTool(name, args = {}) {
     });
     // 只回传模型真正要用的字段：token 必须完整（下一步要用），其余去掉以省上下文
     return okResult({
-      keyword: args.keyword,
+      // 用库还原后的关键词：宿主把编码搞坏时，这里显示的是真正检索的词
+      keyword: r.keyword || args.keyword,
+      ...(r.keywordRepaired
+        ? { keywordNote: `检测到关键词编码异常（GBK/UTF-8 混淆），已自动按「${r.keyword}」检索。` }
+        : {}),
       total: r.total,
       page: r.page,
       maxPage: r.maxPage,
