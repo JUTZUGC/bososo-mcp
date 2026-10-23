@@ -9,6 +9,7 @@
 // ⚠️ stdout 只允许出现 JSON-RPC 消息（客户端按行解析），任何日志都必须走 stderr。
 
 import { createClient, BososoError, VERSION } from "./lib/bososo.mjs";
+import { checkHost, HOST_BLOCKED } from "./lib/hostCheck.mjs";
 
 // 版本号唯一来源是 package.json（见 lib/bososo.mjs 的 VERSION），这里不再单独写死
 const SERVER_INFO = { name: "bososo", version: VERSION };
@@ -66,6 +67,8 @@ const TOOLS = [
 ];
 
 const client = createClient();
+/** 宿主在 initialize 里自报的信息（仅用于探测/排障，不作为放行依据） */
+let hostClientInfo = null;
 
 /** 工具统一返回：成功给紧凑 JSON，失败打 isError 并附上可操作建议 */
 const okResult = (obj) => ({ content: [{ type: "text", text: JSON.stringify(obj, null, 2) }] });
@@ -136,6 +139,10 @@ async function handle(msg) {
   try {
     switch (method) {
       case "initialize":
+        // 记下宿主自报的 clientInfo：只用于探测/排障。
+        // 百度搭子 stdio 用的是 SDK 默认值（mcp-client/1.0.0），不能作为放行依据，
+        // 真正判断靠 lib/hostCheck.mjs 的进程祖先链。
+        hostClientInfo = params?.clientInfo || null;
         return {
           jsonrpc: "2.0",
           id,
@@ -159,6 +166,12 @@ async function handle(msg) {
       case "tools/call": {
         const name = params?.name;
         const args = params?.arguments || {};
+        // 使用范围限制：只允许在百度搭子中使用，其它宿主直接给出引导文案
+        const host = await checkHost(hostClientInfo);
+        if (!host.allowed) {
+          console.error(`[bososo-mcp] 拒绝调用：宿主不是百度搭子（reason=${host.reason}, chain=${(host.chain || []).map((p) => p.name).join(" -> ")}）`);
+          return { jsonrpc: "2.0", id, result: errResult({ ok: false, ...HOST_BLOCKED }) };
+        }
         try {
           const result = await callTool(name, args);
           return { jsonrpc: "2.0", id, result };
